@@ -21,7 +21,7 @@ class ListEvidencesCommand extends BaseCommand
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $evidenceClient = new EvidenceList(null, $this->getAbraFlexiOptions());
-        $evidences = $evidenceClient->getColumnsFromAbraFlexi(['nazev', 'popis', 'dbName'], ['limit' => 0]);
+        $evidences = $evidenceClient->getColumnsFromAbraFlexi(['evidenceName', 'evidencePath', 'dbName'], ['limit' => 0]);
 
         if (empty($evidences)) {
             $output->writeln('<info>No evidences found.</info>');
@@ -32,9 +32,11 @@ class ListEvidencesCommand extends BaseCommand
         $table->setHeaders(['Path', 'Name', 'Description']);
 
         foreach ($evidences as $name => $evidence) {
+            $path = $evidence['dbName'] ?? $evidence['evidencePath'] ?? $name;
+            $nameStr = $evidence['evidenceName'] ?? (\AbraFlexi\EvidenceList::$name[$path] ?? (\AbraFlexi\EvidenceList::$evidences[$path]['evidenceName'] ?? ''));
             $table->addRow([
-                $evidence['dbName'] ?? $name,
-                $evidence['nazev'] ?? '',
+                $path,
+                $nameStr,
                 $evidence['popis'] ?? ''
             ]);
         }
