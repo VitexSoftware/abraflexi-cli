@@ -67,12 +67,15 @@ bin/abraflexi-cli list-evidences
 ```
 
 ### 3. List Records from Evidence
+
 List records from a specific evidence (e.g., `adresar` for Addresses):
+
 ```bash
 bin/abraflexi-cli record adresar list
 ```
 
 **Common Options**:
+
 - `--columns` or `-c`: Comma-separated list of columns to display (default: `id,kod,nazev`).
 - `--limit` or `-l`: Number of records to retrieve (default: `20`).
 - `--start` or `-s`: Offset for pagination.
@@ -81,21 +84,29 @@ bin/abraflexi-cli record adresar list
 - `--detail` or `-d`: Level of detail (`summary`, `full`, `id`, `mini`, `custom`).
 
 **Examples**:
+
 - **Filtering & Limiting**:
+
   ```bash
   bin/abraflexi-cli record adresar list --filter "nazev BEGINS 'A'" --limit 5
   ```
+
 - **Sorting**:
+
   ```bash
   bin/abraflexi-cli record faktura-vydana list --order sumCelkem@D --columns id,kod,sumCelkem
   ```
+
 - **Pagination**:
+
   ```bash
   bin/abraflexi-cli record adresar list --limit 10 --start 20
   ```
 
 ### 4. Show Record Details
+
 Show all fields for a specific record by its ID or Code:
+
 ```bash
 bin/abraflexi-cli record adresar show "code:AAA"
 ```
