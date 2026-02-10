@@ -17,7 +17,7 @@ if (file_exists(dirname(__DIR__) . '/vendor/autoload.php')) {
 
         // AbraFlexi & EaseCore fallback
         spl_autoload_register(function ($class) {
-            $prefix = 'Vitexsoftware\\AbraflexiCli\\';
+            $prefix = 'VitexSoftware\\AbraflexiCli\\';
             $base_dir = __DIR__ . '/../src/';
             $len = strlen($prefix);
             if (strncmp($prefix, $class, $len) === 0) {
@@ -33,9 +33,9 @@ if (file_exists(dirname(__DIR__) . '/vendor/autoload.php')) {
 
 use Symfony\Component\Console\Application;
 use Symfony\Component\Dotenv\Dotenv;
-use Vitexsoftware\AbraflexiCli\Command\ListCompaniesCommand;
-use Vitexsoftware\AbraflexiCli\Command\ListEvidencesCommand;
-use Vitexsoftware\AbraflexiCli\Command\RecordCommand;
+use VitexSoftware\AbraflexiCli\Command\ListCompaniesCommand;
+use VitexSoftware\AbraflexiCli\Command\ListEvidencesCommand;
+use VitexSoftware\AbraflexiCli\Command\RecordCommand;
 
 if (file_exists(__DIR__ . '/../.env')) {
     (new Dotenv())->usePutenv()->load(__DIR__ . '/../.env');

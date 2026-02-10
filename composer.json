@@ -1,28 +1,28 @@
 {
-    "name": "vitexsoftware/abraflexi-cli",
-    "description": "AbraFlexi commandline interface",
-    "type": "project",
-    "require": {
-        "spojenet/flexibee": "dev-main",
-        "symfony/console": "^6.4",
-        "symfony/dotenv": "^6.4",
-        "symfony/dependency-injection": "^6.4",
-        "symfony/yaml": "^6.4"
-    },
-    "license": "MIT",
-    "autoload": {
-        "psr-4": {
-            "Vitexsoftware\\AbraflexiCli\\": "src/"
-        }
-    },
-    "authors": [
-        {
-            "name": "Vítězslav Dvořák",
-            "email": "info@vitexsoftware.cz"
-        }
-    ],
-    "minimum-stability": "dev",
-    "require-dev": {
+  "name": "vitexsoftware/abraflexi-cli",
+  "description": "AbraFlexi commandline interface",
+  "type": "project",
+  "require": {
+    "spojenet/flexibee": "dev-main",
+    "symfony/console": "^6.4",
+    "symfony/dotenv": "^6.4",
+    "symfony/dependency-injection": "^6.4",
+    "symfony/yaml": "^6.4"
+  },
+  "license": "MIT",
+  "autoload": {
+    "psr-4": {
+      "VitexSoftware\\AbraflexiCli\\": "src/"
+    }
+  },
+  "authors": [
+    {
+      "name": "Vítězslav Dvořák",
+      "email": "info@vitexsoftware.cz"
+    }
+  ],
+  "minimum-stability": "dev",
+  "require-dev": {
     "ergebnis/composer-normalize": "^2.49",
     "ergebnis/php-cs-fixer-config": "^6.58",
     "friendsofphp/php-cs-fixer": "^3.92",

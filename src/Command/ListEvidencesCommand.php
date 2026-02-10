@@ -1,6 +1,6 @@
 <?php
 
-namespace Vitexsoftware\AbraflexiCli\Command;
+namespace VitexSoftware\AbraflexiCli\Command;
 
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;

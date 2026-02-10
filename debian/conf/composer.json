@@ -20,7 +20,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Vitexsoftware\\AbraflexiCli\\": "usr/lib/abraflexi-cli/src/"
+            "VitexSoftware\\AbraflexiCli\\": "usr/lib/abraflexi-cli/src/"
         }
     },
     "repositories": [
