@@ -27,6 +27,22 @@ Ensure you have [Composer](https://getcomposer.org/) installed.
     composer install
     ```
 
+## Deb package repository
+
+<https://repo.vitexsoftware.com/>
+
+```bash
+sudo curl -fsSL http://repo.vitexsoftware.com/KEY.gpg -o /usr/share/keyrings/vitexsoftware-archive-keyring.gpg
+
+echo "deb [signed-by=/usr/share/keyrings/vitexsoftware-archive-keyring.gpg] http://repo.vitexsoftware.com/debian/ trixie main" | sudo tee /etc/apt/sources.list.d/vitexsoftware.list
+
+sudo apt update
+
+sudo apt install abraflexi-cli  
+```
+
+note: Change trixie to your debian/ubuntu distribution name (bookworm, jammy, sid, etc. )
+
 ## Configuration
 
 The CLI uses environment variables for authentication. Create a `.env` file in the project root:
