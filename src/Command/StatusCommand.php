@@ -32,34 +32,40 @@ class StatusCommand extends BaseCommand
     {
         $options = $this->getAbraFlexiOptions();
         $output->writeln('<info>Configured AbraFlexi Connection:</info>');
-        $output->writeln('URL: ' . ($options['url'] ?? 'Not set'));
-        $output->writeln('User: ' . ($options['user'] ?? 'Not set'));
-        $output->writeln('Company: ' . ($options['company'] ?? 'Not set'));
+        $output->writeln('URL: '.($options['url'] ?? 'Not set'));
+        $output->writeln('User: '.($options['user'] ?? 'Not set'));
+        $output->writeln('Company: '.($options['company'] ?? 'Not set'));
 
         if (empty($options['url']) || empty($options['user']) || empty($options['password']) || empty($options['company'])) {
             $output->writeln('<error>Some AbraFlexi connection parameters are missing.</error>');
+
             return Command::FAILURE;
         }
 
         $output->writeln('');
         $output->writeln('<info>Checking server and company state...</info>');
+
         try {
             $companyClient = new Company($options['company'], $options);
             $companyInfo = $companyClient->getData();
+
             if (isset($companyInfo['nazev'])) {
-                $output->writeln('Company Name: ' . $companyInfo['nazev']);
-                $output->writeln('Company DB: ' . $companyInfo['dbNazev']);
-                $output->writeln('Company State: ' . ($companyInfo['stavEnum'] ?? 'N/A'));
+                $output->writeln('Company Name: '.$companyInfo['nazev']);
+                $output->writeln('Company DB: '.$companyInfo['dbNazev']);
+                $output->writeln('Company State: '.($companyInfo['stavEnum'] ?? 'N/A'));
             } else {
                 $output->writeln('<error>Unable to retrieve company information.</error>');
+
                 return Command::FAILURE;
             }
         } catch (\Exception $e) {
-            $output->writeln('<error>Server or company not reachable: ' . $e->getMessage() . '</error>');
+            $output->writeln('<error>Server or company not reachable: '.$e->getMessage().'</error>');
+
             return Command::FAILURE;
         }
 
         $output->writeln('<info>Server and company are reachable and configured correctly.</info>');
+
         return Command::SUCCESS;
     }
 }
