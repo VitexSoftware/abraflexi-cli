@@ -3,7 +3,7 @@
 
 declare(strict_types=1);
 
-require_once '../vendor/autoload.php';
+require_once __DIR__ . '/../vendor/autoload.php';
 
 
 use Symfony\Component\Console\Application;
@@ -42,5 +42,7 @@ $application = new Application('AbraFlexi CLI', '0.1.0');
 $application->add(new ListCompaniesCommand());
 $application->add(new ListEvidencesCommand());
 $application->add(new RecordCommand());
+
+$application->add(new \VitexSoftware\AbraflexiCli\Command\StatusCommand());
 
 $application->run();
