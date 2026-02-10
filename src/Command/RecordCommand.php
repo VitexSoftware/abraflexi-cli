@@ -1,14 +1,25 @@
 <?php
 
+declare(strict_types=1);
+
+/**
+ * This file is part of the  AbraFlexi CLI package.
+ *
+ * (c) Vítězslav Dvořák <https://vitexsoftware.cz/>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace VitexSoftware\AbraflexiCli\Command;
 
+use AbraFlexi\RO;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Helper\Table;
-use AbraFlexi\RO;
 
 class RecordCommand extends BaseCommand
 {
@@ -55,8 +66,10 @@ class RecordCommand extends BaseCommand
 
         // Pass extra params to defaultUrlParams
         $params = [];
+
         foreach (['order', 'relations', 'includes', 'dry-run', 'add-row-count'] as $param) {
             $val = $input->getOption($param);
+
             if ($val) {
                 $client->defaultUrlParams[$param] = $val;
                 $params[$param] = $val;
@@ -67,31 +80,38 @@ class RecordCommand extends BaseCommand
             $limit = (int) $input->getOption('limit');
             $start = $input->getOption('start');
             $listParams = ['limit' => $limit];
+
             if ($start !== null) {
                 $listParams['start'] = (int) $start;
             }
-            return $this->handleList($client, $columns, $listParams, $output);
+
+            return self::handleList($client, $columns, $listParams, $output);
         }
 
         if ($operation === 'show') {
             $id = $input->getArgument('id');
+
             if (!$id) {
                 $output->writeln('<error>ID is required for show operation</error>');
+
                 return Command::FAILURE;
             }
-            return $this->handleShow($client, $id, $output);
+
+            return self::handleShow($client, $id, $output);
         }
 
-        $output->writeln("<error>Unsupported operation: $operation</error>");
+        $output->writeln("<error>Unsupported operation: {$operation}</error>");
+
         return Command::FAILURE;
     }
 
-    private function handleList(RO $client, array $columns, array $params, OutputInterface $output): int
+    private static function handleList(RO $client, array $columns, array $params, OutputInterface $output): int
     {
         $records = $client->getColumnsFromAbraFlexi($columns, $params);
 
         if (empty($records)) {
             $output->writeln('<info>No records found.</info>');
+
             return Command::SUCCESS;
         }
 
@@ -100,22 +120,26 @@ class RecordCommand extends BaseCommand
 
         foreach ($records as $record) {
             $row = [];
+
             foreach ($columns as $col) {
                 $row[] = $record[$col] ?? '';
             }
+
             $table->addRow($row);
         }
 
         $table->render();
+
         return Command::SUCCESS;
     }
 
-    private function handleShow(RO $client, $id, OutputInterface $output): int
+    private static function handleShow(RO $client, $id, OutputInterface $output): int
     {
         $record = $client->getColumnsFromAbraFlexi('*', ['id' => $id]);
 
         if (empty($record)) {
-            $output->writeln("<error>Record $id not found.</error>");
+            $output->writeln("<error>Record {$id} not found.</error>");
+
             return Command::FAILURE;
         }
 
@@ -125,10 +149,11 @@ class RecordCommand extends BaseCommand
         }
 
         foreach ($record as $key => $value) {
-            if (is_array($value)) {
+            if (\is_array($value)) {
                 $value = json_encode($value);
             }
-            $output->writeln("<info>$key</info>: $value");
+
+            $output->writeln("<info>{$key}</info>: {$value}");
         }
 
         return Command::SUCCESS;

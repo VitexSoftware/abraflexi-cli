@@ -1,18 +1,26 @@
 <?php
 
+declare(strict_types=1);
+
+/**
+ * This file is part of the  AbraFlexi CLI package.
+ *
+ * (c) Vítězslav Dvořák <https://vitexsoftware.cz/>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace VitexSoftware\AbraflexiCli\Command;
 
+use AbraFlexi\RO;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use AbraFlexi\RO;
 
 abstract class BaseCommand extends Command
 {
-    /**
-     * @var RO
-     */
-    protected $connection;
+    protected RO $connection;
 
     // Removed empty configure() to avoid potential issues with child commands
     protected function initialize(InputInterface $input, OutputInterface $output): void
@@ -36,7 +44,7 @@ abstract class BaseCommand extends Command
     protected function getAbraFlexiOptions(): array
     {
         $options = [
-            'verify' => false
+            'verify' => false,
         ];
 
         if (getenv('ABRAFLEXI_URL')) {

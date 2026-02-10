@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg id="svg1306" sodipodi:docname="command_line.svg" inkscape:export-filename="/home/andreas/projekt/bild/tango/terminal4.png" viewBox="0 0 256 256" sodipodi:version="0.32" inkscape:export-xdpi="240.00000" inkscape:output_extension="org.inkscape.output.svg.inkscape" inkscape:export-ydpi="240.00000" inkscape:version="1.1.1 (3bf5ae0d25, 2021-09-20)" version="1.1" width="256" height="256" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <defs id="defs1308">
+    <linearGradient id="linearGradient2212" y2="14.158" gradientUnits="userSpaceOnUse" x2="24.841999" gradientTransform="matrix(0.95741,0,0,0.95233,1.0228,0.13331)" y1="32.285999" x1="29.870001" inkscape:collect="always">
+      <stop id="stop2208" style="stop-color:#777973" offset="0"/>
+      <stop id="stop2210" style="stop-color:#cbccca" offset="1"/>
+    </linearGradient>
+    <linearGradient id="linearGradient2220" y2="32.498001" gradientUnits="userSpaceOnUse" x2="21.305" gradientTransform="matrix(0.95741,0,0,0.95233,1.0228,0.13331)" y1="9.5865002" x1="8.6528997" inkscape:collect="always">
+      <stop id="stop5178" style="stop-color:#a2a59c" offset="0"/>
+      <stop id="stop5180" style="stop-color:#535750" offset="1"/>
+    </linearGradient>
+    <linearGradient id="linearGradient2244" y2="49.730999" gradientUnits="userSpaceOnUse" x2="48.845001" gradientTransform="matrix(0.95351,0,0,0.94787,1.1415,1.2056)" y1="19.636999" x1="20.339001" inkscape:collect="always">
+      <stop id="stop2240" style="stop-color:#ffffff" offset="0"/>
+      <stop id="stop2242" style="stop-color:#ffffff;stop-opacity:0" offset="1"/>
+    </linearGradient>
+  </defs>
+  <sodipodi:namedview id="base" bordercolor="#666666" inkscape:pageshadow="2" inkscape:window-y="-8" pagecolor="#ffffff" inkscape:window-height="705" inkscape:grid-bbox="true" inkscape:zoom="1.4142136" inkscape:window-x="-8" showgrid="false" borderopacity="0.19607843" inkscape:current-layer="svg1306" inkscape:cx="66.468037" inkscape:cy="136.82516" showguides="true" inkscape:guide-bbox="true" inkscape:showpageshadow="false" inkscape:window-width="1366" inkscape:pageopacity="0.0" inkscape:document-units="px" inkscape:pagecheckerboard="true" inkscape:window-maximized="1" fit-margin-top="0" fit-margin-left="0" fit-margin-right="0" fit-margin-bottom="0"/>
+  <metadata id="metadata367">
+    <rdf:RDF>
+      <cc:Work>
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+        <cc:license rdf:resource="http://creativecommons.org/publicdomain/zero/1.0/"/>
+        <dc:publisher>
+          <cc:Agent rdf:about="http://openclipart.org/">
+            <dc:title>Openclipart</dc:title>
+          </cc:Agent>
+        </dc:publisher>
+        <dc:title>tango utilities terminal</dc:title>
+        <dc:date>2010-03-29T08:55:42</dc:date>
+        <dc:description>"Terminal" icon from &lt;a href="http://tango.freedesktop.org/Tango_Desktop_Project"&gt; Tango Project &lt;/a&gt; 
+\n&lt;br&gt;&lt;br&gt;
+\nSince version 0.8.90 Tango Project icons are Public Domain: &lt;a href="http://tango.freedesktop.org/Frequently_Asked_Questions#Terms_of_Use.3F"&gt; Tango Project FAQ &lt;/a&gt;</dc:description>
+        <dc:source>https://openclipart.org/detail/35359/tango-utilities-terminal-by-warszawianka</dc:source>
+        <dc:creator>
+          <cc:Agent>
+            <dc:title>warszawianka</dc:title>
+          </cc:Agent>
+        </dc:creator>
+        <dc:subject>
+          <rdf:Bag>
+            <rdf:li>display</rdf:li>
+            <rdf:li>externalsource</rdf:li>
+            <rdf:li>icon</rdf:li>
+            <rdf:li>monitor</rdf:li>
+            <rdf:li>screen</rdf:li>
+            <rdf:li>tango</rdf:li>
+            <rdf:li>terminal</rdf:li>
+          </rdf:Bag>
+        </dc:subject>
+      </cc:Work>
+      <cc:License rdf:about="http://creativecommons.org/publicdomain/zero/1.0/">
+        <cc:permits rdf:resource="http://creativecommons.org/ns#Reproduction"/>
+        <cc:permits rdf:resource="http://creativecommons.org/ns#Distribution"/>
+        <cc:permits rdf:resource="http://creativecommons.org/ns#DerivativeWorks"/>
+      </cc:License>
+    </rdf:RDF>
+  </metadata>
+  <g id="g9460" transform="matrix(5.5657016,0,0,5.5657016,-5.5801731,-0.01726075)" inkscape:export-filename="F:\command_line.png" inkscape:export-xdpi="48" inkscape:export-ydpi="48">
+    <rect id="rect1316" style="display:inline;fill:url(#linearGradient2212);fill-rule:evenodd;stroke:url(#linearGradient2220);stroke-linecap:round;stroke-linejoin:round" rx="4.8516998" ry="4.8516998" height="38.999001" width="44.995998" y="3.5016" x="1.5026"/>
+    <rect id="rect1314" style="display:inline;fill:#020201;fill-opacity:1;fill-rule:evenodd;stroke:#616161;stroke-width:0.99496;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:1" rx="1.6452" ry="1.6452" height="29.021999" width="37.088001" y="7.4826999" x="5.4963002"/>
+    <rect id="rect2232" style="display:inline;opacity:0.76374;fill:none;stroke:url(#linearGradient2244);stroke-linecap:round;stroke-linejoin:round" rx="3.7909999" ry="3.7909999" height="37.000999" width="42.945" y="4.5007" x="2.5543001"/>
+    <path id="text1340" sodipodi:nodetypes="ccccccccccccc" style="fill:#ffffff;stroke:#6ed66e;stroke-width:1pt;stroke-opacity:0.27869" d="m 11.625,20.679 v -3.054 l 8.985,4.061 v 1.856 l -8.985,4.087 V 24.584 L 18.589,22.73 Z M 30.518,30.706 V 32.68 H 19.614 v -1.974 h 10.904"/>
+  </g>
+</svg>

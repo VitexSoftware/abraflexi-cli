@@ -1,5 +1,7 @@
 # AbraFlexi CLI
 
+![Logo](abraflexi-cli.svg?raw=true)
+
 A powerful, Symfony-based Command Line Interface for [AbraFlexi](https://www.abraflexi.eu/), allowing you to interact with your accounting data directly from the terminal. This tool is built on top of the robust [spojenet/flexibee](https://github.com/Spoje-NET/php-abraflexi) library.
 
 ## Features
@@ -38,7 +40,7 @@ echo "deb [signed-by=/usr/share/keyrings/vitexsoftware-archive-keyring.gpg] http
 
 sudo apt update
 
-sudo apt install abraflexi-cli  
+sudo apt install abraflexi-cli
 ```
 
 note: Change trixie to your debian/ubuntu distribution name (bookworm, jammy, sid, etc. )

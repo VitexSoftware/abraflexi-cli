@@ -1,12 +1,23 @@
 <?php
 
+declare(strict_types=1);
+
+/**
+ * This file is part of the  AbraFlexi CLI package.
+ *
+ * (c) Vítězslav Dvořák <https://vitexsoftware.cz/>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace VitexSoftware\AbraflexiCli\Command;
 
+use AbraFlexi\EvidenceList;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Helper\Table;
-use AbraFlexi\EvidenceList;
 
 class ListEvidencesCommand extends BaseCommand
 {
@@ -25,6 +36,7 @@ class ListEvidencesCommand extends BaseCommand
 
         if (empty($evidences)) {
             $output->writeln('<info>No evidences found.</info>');
+
             return Command::SUCCESS;
         }
 
@@ -37,7 +49,7 @@ class ListEvidencesCommand extends BaseCommand
             $table->addRow([
                 $path,
                 $nameStr,
-                $evidence['popis'] ?? ''
+                $evidence['popis'] ?? '',
             ]);
         }
 
