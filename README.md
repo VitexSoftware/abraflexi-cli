@@ -40,6 +40,14 @@ ABRAFLEXI_COMPANY=demo_de
 
 *Note: The tool supports both `ABRAFLEXI_LOGIN` and `ABRAFLEXI_USER` variables.*
 
+### Custom Environment File
+
+You can specify a custom environment file using the `--envfile` global option:
+
+```bash
+bin/abraflexi-cli --envfile=/path/to/your.env list-companies
+```
+
 ## Usage
 
 The main executable is located at `bin/abraflexi-cli`.

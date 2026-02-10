@@ -1,35 +1,10 @@
 #!/usr/bin/env php
 <?php
 
-if (file_exists(dirname(__DIR__) . '/vendor/autoload.php')) {
-    require_once dirname(__DIR__) . '/vendor/autoload.php';
-} else {
-    if (file_exists('../vendor/autoload.php')) {
-        require_once '../vendor/autoload.php';
-    } else {
-        // System-wide installation
-        if (file_exists('/usr/share/php/Symfony/Component/Console/autoload.php')) {
-            require_once '/usr/share/php/Symfony/Component/Console/autoload.php';
-            require_once '/usr/share/php/Symfony/Component/Dotenv/autoload.php';
-            require_once '/usr/share/php/Symfony/Component/DependencyInjection/autoload.php';
-            require_once '/usr/share/php/Symfony/Component/Yaml/autoload.php';
-        }
+declare(strict_types=1);
 
-        // AbraFlexi & EaseCore fallback
-        spl_autoload_register(function ($class) {
-            $prefix = 'VitexSoftware\\AbraflexiCli\\';
-            $base_dir = __DIR__ . '/../src/';
-            $len = strlen($prefix);
-            if (strncmp($prefix, $class, $len) === 0) {
-                $relative_class = substr($class, $len);
-                $file = $base_dir . str_replace('\\', '/', $relative_class) . '.php';
-                if (file_exists($file)) {
-                    require $file;
-                }
-            }
-        });
-    }
-}
+require_once '../vendor/autoload.php';
+
 
 use Symfony\Component\Console\Application;
 use Symfony\Component\Dotenv\Dotenv;
@@ -37,9 +12,30 @@ use VitexSoftware\AbraflexiCli\Command\ListCompaniesCommand;
 use VitexSoftware\AbraflexiCli\Command\ListEvidencesCommand;
 use VitexSoftware\AbraflexiCli\Command\RecordCommand;
 
+$envFile = null;
+foreach ($_SERVER['argv'] as $key => $val) {
+    if (str_starts_with($val, '--envfile=')) {
+        $envFile = substr($val, 10);
+        unset($_SERVER['argv'][$key]);
+    } elseif ($val === '--envfile') {
+        $envFile = $_SERVER['argv'][$key + 1] ?? null;
+        unset($_SERVER['argv'][$key], $_SERVER['argv'][$key + 1]);
+    }
+}
+
+if ($envFile && file_exists($envFile)) {
+    (new Dotenv())->usePutenv()->load($envFile);
+}
+
 if (file_exists(__DIR__ . '/../.env')) {
     (new Dotenv())->usePutenv()->load(__DIR__ . '/../.env');
 }
+
+if (file_exists('.env')) {
+    (new Dotenv())->usePutenv()->load('.env');
+}
+
+$_SERVER['argv'] = array_values($_SERVER['argv']);
 
 $application = new Application('AbraFlexi CLI', '0.1.0');
 

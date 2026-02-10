@@ -20,8 +20,15 @@
     },
     "autoload": {
         "psr-4": {
-            "VitexSoftware\\AbraflexiCli\\": "usr/lib/abraflexi-cli/src/"
-        }
+            "VitexSoftware\\AbraflexiCli\\": "/usr/lib/abraflexi-cli/src/",
+            "VitexSoftware\\AbraflexiCli\\Command": "/usr/lib/abraflexi-cli/src/Command/"
+        },
+        "files": [
+            "/usr/share/php/Symfony/Component/Console/autoload.php",
+            "/usr/share/php/Symfony/Component/Dotenv/autoload.php",
+            "/usr/share/php/Symfony/Component/DependencyInjection/autoload.php",
+            "/usr/share/php/Symfony/Component/Yaml/autoload.php"
+        ]
     },
     "repositories": [
         {
