@@ -1,0 +1,52 @@
+{
+    "name": "deb/abraflexi-cli",
+    "description": "AbraFlexi commandline interface",
+    "type": "project",
+    "authors": [
+        {
+            "name": "Vítězslav Dvořák",
+            "email": "info@vitexsoftware.cz"
+        }
+    ],
+    "config": {
+        "vendor-dir": "/var/lib/composer/abraflexi-cli"
+    },
+    "require": {
+        "deb/abraflexi": "*",
+        "symfony/console": "^6.4",
+        "symfony/dotenv": "^6.4",
+        "symfony/dependency-injection": "^6.4",
+        "symfony/yaml": "^6.4"
+    },
+    "autoload": {
+        "psr-4": {
+            "Vitexsoftware\\AbraflexiCli\\": "usr/lib/abraflexi-cli/src/"
+        }
+    },
+    "repositories": [
+        {
+            "type": "path",
+            "url": "/usr/share/php/EaseCore"
+        },
+        {
+            "type": "path",
+            "url": "/usr/share/php/AbraFlexi"
+        },
+        {
+            "type": "path",
+            "url": "/usr/share/php/Symfony/Component/Console"
+        },
+        {
+            "type": "path",
+            "url": "/usr/share/php/Symfony/Component/Dotenv"
+        },
+        {
+            "type": "path",
+            "url": "/usr/share/php/Symfony/Component/DependencyInjection"
+        },
+        {
+            "type": "path",
+            "url": "/usr/share/php/Symfony/Component/Yaml"
+        }
+    ]
+}

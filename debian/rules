@@ -8,8 +8,6 @@
 %:
 	dh $@
 
-#override_dh_auto_install:
-#	dh_auto_install -- prefix=/usr
-
-#override_dh_install:
-#	dh_install --list-missing -X.pyc -X.pyo
+override_dh_install:
+	dh_install
+	sed -i -e 's/\.\.\/vendor/\/var\/lib\/composer\/abraflexi-cli/g' debian/abraflexi-cli/usr/lib/abraflexi-cli/bin/abraflexi-cli

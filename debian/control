@@ -19,7 +19,8 @@ Depends:
  php-symfony-dotenv,
  php-symfony-dependency-injection,
  php-symfony-yaml,
- php-vitexsoftware-ease-core
+ php-vitexsoftware-ease-core,
+ composer-debian
 Description: AbraFlexi commandline interface
  Symfony-based CLI for interacting with AbraFlexi API.
  Provides commands for listing companies, evidences, and records.

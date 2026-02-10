@@ -1,3 +1,3 @@
 src usr/lib/abraflexi-cli/
 bin/abraflexi-cli usr/lib/abraflexi-cli/bin/
-composer.json usr/lib/abraflexi-cli/
+debian/conf/composer.json usr/lib/abraflexi-cli/

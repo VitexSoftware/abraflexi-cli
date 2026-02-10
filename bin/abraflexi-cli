@@ -1,19 +1,21 @@
 #!/usr/bin/env php
 <?php
 
-if (file_exists(__DIR__ . '/../vendor/autoload.php')) {
-    require __DIR__ . '/../vendor/autoload.php';
+if (file_exists(dirname(__DIR__) . '/vendor/autoload.php')) {
+    require_once dirname(__DIR__) . '/vendor/autoload.php';
 } else {
-    // System-wide installation
-    if (file_exists('/usr/share/php/Symfony/Component/Console/autoload.php')) {
-        require_once '/usr/share/php/Symfony/Component/Console/autoload.php';
-        require_once '/usr/share/php/Symfony/Component/Dotenv/autoload.php';
-        require_once '/usr/share/php/Symfony/Component/DependencyInjection/autoload.php';
-        require_once '/usr/share/php/Symfony/Component/Yaml/autoload.php';
-    }
+    if (file_exists('../vendor/autoload.php')) {
+        require_once '../vendor/autoload.php';
+    } else {
+        // System-wide installation
+        if (file_exists('/usr/share/php/Symfony/Component/Console/autoload.php')) {
+            require_once '/usr/share/php/Symfony/Component/Console/autoload.php';
+            require_once '/usr/share/php/Symfony/Component/Dotenv/autoload.php';
+            require_once '/usr/share/php/Symfony/Component/DependencyInjection/autoload.php';
+            require_once '/usr/share/php/Symfony/Component/Yaml/autoload.php';
+        }
 
-    // AbraFlexi & EaseCore fallback
-    foreach (['AbraFlexi', 'Ease', 'Vitexsoftware/AbraflexiCli'] as $namespace) {
+        // AbraFlexi & EaseCore fallback
         spl_autoload_register(function ($class) {
             $prefix = 'Vitexsoftware\\AbraflexiCli\\';
             $base_dir = __DIR__ . '/../src/';
@@ -41,8 +43,8 @@ if (file_exists(__DIR__ . '/../.env')) {
 
 $application = new Application('AbraFlexi CLI', '0.1.0');
 
-$application->addCommand(new ListCompaniesCommand());
-$application->addCommand(new ListEvidencesCommand());
-$application->addCommand(new RecordCommand());
+$application->add(new ListCompaniesCommand());
+$application->add(new ListEvidencesCommand());
+$application->add(new RecordCommand());
 
 $application->run();
