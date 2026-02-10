@@ -1,0 +1,37 @@
+{
+    "name": "vitexsoftware/abraflexi-cli",
+    "description": "AbraFlexi commandline interface",
+    "type": "project",
+    "require": {
+        "spojenet/flexibee": "dev-main",
+        "symfony/console": "8.1.x-dev",
+        "symfony/dotenv": "8.1.x-dev",
+        "symfony/dependency-injection": "8.1.x-dev",
+        "symfony/yaml": "8.1.x-dev"
+    },
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Vitexsoftware\\AbraflexiCli\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Vítězslav Dvořák",
+            "email": "info@vitexsoftware.cz"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require-dev": {
+    "ergebnis/composer-normalize": "^2.49",
+    "ergebnis/php-cs-fixer-config": "^6.58",
+    "friendsofphp/php-cs-fixer": "^3.92",
+    "phpstan/phpstan": "^2.1",
+    "phpunit/phpunit": "*"
+  },
+  "config": {
+    "allow-plugins": {
+      "ergebnis/composer-normalize": true
+    }
+  }
+}

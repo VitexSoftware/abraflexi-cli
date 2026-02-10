@@ -1,0 +1,22 @@
+#!/usr/bin/env php
+<?php
+
+require __DIR__ . '/../vendor/autoload.php';
+
+use Symfony\Component\Console\Application;
+use Symfony\Component\Dotenv\Dotenv;
+use Vitexsoftware\AbraflexiCli\Command\ListCompaniesCommand;
+use Vitexsoftware\AbraflexiCli\Command\ListEvidencesCommand;
+use Vitexsoftware\AbraflexiCli\Command\RecordCommand;
+
+if (file_exists(__DIR__ . '/../.env')) {
+    (new Dotenv())->usePutenv()->load(__DIR__ . '/../.env');
+}
+
+$application = new Application('AbraFlexi CLI', '0.1.0');
+
+$application->addCommand(new ListCompaniesCommand());
+$application->addCommand(new ListEvidencesCommand());
+$application->addCommand(new RecordCommand());
+
+$application->run();
