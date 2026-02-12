@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /**
- * This file is part of the AbraFlexi CLI package.
+ * This file is part of the  AbraFlexi CLI package.
  *
  * (c) Vítězslav Dvořák <https://vitexsoftware.cz/>
  *
@@ -90,10 +90,10 @@ class PropertiesHelper
 
         foreach ($properties as $fieldName => $fieldProps) {
             if (
-                isset($fieldProps['mandatory']) &&
-                $fieldProps['mandatory'] === 'true' &&
-                isset($fieldProps['isWritable']) &&
-                $fieldProps['isWritable'] === 'true'
+                isset($fieldProps['mandatory'])
+                && $fieldProps['mandatory'] === 'true'
+                && isset($fieldProps['isWritable'])
+                && $fieldProps['isWritable'] === 'true'
             ) {
                 $mandatory[$fieldName] = $fieldProps;
             }
@@ -129,7 +129,7 @@ class PropertiesHelper
      * @param string $evidence  Evidence name
      * @param string $fieldName Field name
      *
-     * @return array<string, mixed>|null Field properties or null if not found
+     * @return null|array<string, mixed> Field properties or null if not found
      */
     public static function getFieldInfo(string $evidence, string $fieldName): ?array
     {
@@ -213,7 +213,7 @@ class PropertiesHelper
             }
 
             if (!empty($allowedValues)) {
-                $info .= ' - allowed: ' . implode(', ', $allowedValues);
+                $info .= ' - allowed: '.implode(', ', $allowedValues);
             }
         }
 

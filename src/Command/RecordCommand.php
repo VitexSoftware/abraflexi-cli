@@ -197,7 +197,7 @@ class RecordCommand extends BaseCommand
             $knownOptions = ['columns', 'limit', 'start', 'order', 'filter', 'detail', 'relations', 'includes', 'dry-run', 'add-row-count', 'data', 'force'];
 
             foreach ($allOptions as $key => $value) {
-                if (!in_array($key, $knownOptions) && $value !== null && $value !== false) {
+                if (!\in_array($key, $knownOptions, true) && $value !== null && $value !== false) {
                     $data[$key] = $value;
                 }
             }
@@ -206,7 +206,7 @@ class RecordCommand extends BaseCommand
         if (empty($data)) {
             $output->writeln('<error>No data provided for create operation</error>');
             $output->writeln('<info>Usage: record {evidence} create --data \'{"field":"value"}\' or --field=value</info>');
-            $this->showMandatoryFields($evidence, $output);
+            self::showMandatoryFields($evidence, $output);
 
             return Command::FAILURE;
         }
@@ -218,7 +218,7 @@ class RecordCommand extends BaseCommand
             $output->writeln('<comment>Warning: The following mandatory fields are missing:</comment>');
 
             foreach ($missingFields as $fieldName => $fieldProps) {
-                $output->writeln('  <comment>- ' . PropertiesHelper::formatFieldInfo($fieldName, $fieldProps) . '</comment>');
+                $output->writeln('  <comment>- '.PropertiesHelper::formatFieldInfo($fieldName, $fieldProps).'</comment>');
             }
 
             $output->writeln('');
@@ -258,6 +258,7 @@ class RecordCommand extends BaseCommand
                 }
 
                 $recordIdent = $client->getRecordIdent();
+
                 if ($recordIdent) {
                     $output->writeln("<info>Record Ident:</info> {$recordIdent}");
                 }
@@ -285,7 +286,7 @@ class RecordCommand extends BaseCommand
             if (!empty($client->errors)) {
                 foreach ($client->errors as $error) {
                     if (\is_array($error)) {
-                        $output->writeln('<error>' . ($error['message'] ?? json_encode($error)) . '</error>');
+                        $output->writeln('<error>'.($error['message'] ?? json_encode($error)).'</error>');
                     } else {
                         $output->writeln("<error>{$error}</error>");
                     }
@@ -294,7 +295,7 @@ class RecordCommand extends BaseCommand
 
             return Command::FAILURE;
         } catch (\Exception $e) {
-            $output->writeln('<error>Error: ' . $e->getMessage() . '</error>');
+            $output->writeln('<error>Error: '.$e->getMessage().'</error>');
 
             return Command::FAILURE;
         }
@@ -306,7 +307,7 @@ class RecordCommand extends BaseCommand
      * @param string          $evidence Evidence name
      * @param OutputInterface $output   Output interface
      */
-    private function showMandatoryFields(string $evidence, OutputInterface $output): void
+    private static function showMandatoryFields(string $evidence, OutputInterface $output): void
     {
         $mandatory = PropertiesHelper::getMandatoryFields($evidence);
 
@@ -320,7 +321,7 @@ class RecordCommand extends BaseCommand
         $output->writeln("<info>Mandatory fields for '{$evidence}':</info>");
 
         foreach ($mandatory as $fieldName => $fieldProps) {
-            $output->writeln('  - ' . PropertiesHelper::formatFieldInfo($fieldName, $fieldProps));
+            $output->writeln('  - '.PropertiesHelper::formatFieldInfo($fieldName, $fieldProps));
         }
     }
 }
