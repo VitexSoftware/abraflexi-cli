@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace VitexSoftware\AbraflexiCli\Command;
 
 use AbraFlexi\RO;
+use AbraFlexi\RW;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputArgument;
@@ -30,8 +31,8 @@ class RecordCommand extends BaseCommand
         $this
             ->setName('record')
             ->setDescription('Interact with specific evidence records')
-            ->addArgument('evidence', InputArgument::REQUIRED, 'Evidence name (e.g., faktura-vydana)')
-            ->addArgument('operation', InputArgument::OPTIONAL, 'Operation: list, show', 'list')
+            ->addArgument('evidence', InputArgument::REQUIRED, 'Evidence name (e.g., faktura-vydana, banka)')
+            ->addArgument('operation', InputArgument::OPTIONAL, 'Operation: list, show, create', 'list')
             ->addArgument('id', InputArgument::OPTIONAL, 'Record ID (for show)')
             ->addOption('columns', 'c', InputOption::VALUE_OPTIONAL, 'Comma separated list of columns', 'id,kod,nazev')
             ->addOption('limit', 'l', InputOption::VALUE_OPTIONAL, 'Limit results', 20)
@@ -42,7 +43,9 @@ class RecordCommand extends BaseCommand
             ->addOption('relations', 'r', InputOption::VALUE_OPTIONAL, 'Include relations')
             ->addOption('includes', 'i', InputOption::VALUE_OPTIONAL, 'Include related objects')
             ->addOption('dry-run', null, InputOption::VALUE_NONE, 'Test run without making changes')
-            ->addOption('add-row-count', null, InputOption::VALUE_NONE, 'Add total row count to output');
+            ->addOption('add-row-count', null, InputOption::VALUE_NONE, 'Add total row count to output')
+            ->addOption('data', null, InputOption::VALUE_OPTIONAL, 'JSON data for create operation')
+            ->addOption('force', null, InputOption::VALUE_NONE, 'Force create even if mandatory fields are missing');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
@@ -98,6 +101,10 @@ class RecordCommand extends BaseCommand
             }
 
             return self::handleShow($client, $id, $output);
+        }
+
+        if ($operation === 'create') {
+            return $this->handleCreate($evidence, $input, $output);
         }
 
         $output->writeln("<error>Unsupported operation: {$operation}</error>");
@@ -157,5 +164,163 @@ class RecordCommand extends BaseCommand
         }
 
         return Command::SUCCESS;
+    }
+
+    /**
+     * Handle record creation with mandatory field validation.
+     *
+     * @param string          $evidence Evidence name
+     * @param InputInterface  $input    Input interface
+     * @param OutputInterface $output   Output interface
+     *
+     * @return int Command exit code
+     */
+    private function handleCreate(string $evidence, InputInterface $input, OutputInterface $output): int
+    {
+        $jsonData = $input->getOption('data');
+        $force = $input->getOption('force');
+        $dryRun = $input->getOption('dry-run');
+
+        $data = [];
+
+        if (!empty($jsonData)) {
+            $data = json_decode($jsonData, true);
+
+            if (!\is_array($data)) {
+                $output->writeln('<error>Invalid JSON data provided</error>');
+
+                return Command::FAILURE;
+            }
+        } else {
+            // Collect individual field options
+            $allOptions = $input->getOptions();
+            $knownOptions = ['columns', 'limit', 'start', 'order', 'filter', 'detail', 'relations', 'includes', 'dry-run', 'add-row-count', 'data', 'force'];
+
+            foreach ($allOptions as $key => $value) {
+                if (!in_array($key, $knownOptions) && $value !== null && $value !== false) {
+                    $data[$key] = $value;
+                }
+            }
+        }
+
+        if (empty($data)) {
+            $output->writeln('<error>No data provided for create operation</error>');
+            $output->writeln('<info>Usage: record {evidence} create --data \'{"field":"value"}\' or --field=value</info>');
+            $this->showMandatoryFields($evidence, $output);
+
+            return Command::FAILURE;
+        }
+
+        // Check for missing mandatory fields
+        $missingFields = PropertiesHelper::getMissingMandatoryFields($evidence, $data);
+
+        if (!empty($missingFields)) {
+            $output->writeln('<comment>Warning: The following mandatory fields are missing:</comment>');
+
+            foreach ($missingFields as $fieldName => $fieldProps) {
+                $output->writeln('  <comment>- ' . PropertiesHelper::formatFieldInfo($fieldName, $fieldProps) . '</comment>');
+            }
+
+            $output->writeln('');
+
+            if (!$force) {
+                $output->writeln('<error>Record creation aborted. Use --force to create anyway.</error>');
+
+                return Command::FAILURE;
+            }
+
+            $output->writeln('<comment>Proceeding with --force flag...</comment>');
+        }
+
+        // Create the record using RW class
+        $options = $this->getAbraFlexiOptions();
+        $options['evidence'] = $evidence;
+
+        if ($dryRun) {
+            $options['dry-run'] = true;
+        }
+
+        $client = new RW(null, $options);
+        $client->setData($data);
+
+        try {
+            $result = $client->insertToAbraFlexi();
+
+            if ($client->lastResponseCode === 201 || ($dryRun && $client->lastResponseCode === 200)) {
+                if ($dryRun) {
+                    $output->writeln('<info>Dry-run successful. Record would be created with the following data:</info>');
+                } else {
+                    $output->writeln('<info>Record created successfully!</info>');
+                }
+
+                if ($client->lastInsertedID) {
+                    $output->writeln("<info>ID:</info> {$client->lastInsertedID}");
+                }
+
+                $recordIdent = $client->getRecordIdent();
+                if ($recordIdent) {
+                    $output->writeln("<info>Record Ident:</info> {$recordIdent}");
+                }
+
+                if (!empty($result) && \is_array($result)) {
+                    foreach ($result as $item) {
+                        if (\is_array($item)) {
+                            foreach ($item as $key => $value) {
+                                if (\is_array($value)) {
+                                    $value = json_encode($value);
+                                }
+
+                                $output->writeln("<info>{$key}</info>: {$value}");
+                            }
+                        }
+                    }
+                }
+
+                return Command::SUCCESS;
+            }
+
+            $output->writeln('<error>Failed to create record</error>');
+            $output->writeln("<error>Response code: {$client->lastResponseCode}</error>");
+
+            if (!empty($client->errors)) {
+                foreach ($client->errors as $error) {
+                    if (\is_array($error)) {
+                        $output->writeln('<error>' . ($error['message'] ?? json_encode($error)) . '</error>');
+                    } else {
+                        $output->writeln("<error>{$error}</error>");
+                    }
+                }
+            }
+
+            return Command::FAILURE;
+        } catch (\Exception $e) {
+            $output->writeln('<error>Error: ' . $e->getMessage() . '</error>');
+
+            return Command::FAILURE;
+        }
+    }
+
+    /**
+     * Display mandatory fields for an evidence.
+     *
+     * @param string          $evidence Evidence name
+     * @param OutputInterface $output   Output interface
+     */
+    private function showMandatoryFields(string $evidence, OutputInterface $output): void
+    {
+        $mandatory = PropertiesHelper::getMandatoryFields($evidence);
+
+        if (empty($mandatory)) {
+            $output->writeln("<comment>No mandatory field information found for evidence '{$evidence}'</comment>");
+
+            return;
+        }
+
+        $output->writeln('');
+        $output->writeln("<info>Mandatory fields for '{$evidence}':</info>");
+
+        foreach ($mandatory as $fieldName => $fieldProps) {
+            $output->writeln('  - ' . PropertiesHelper::formatFieldInfo($fieldName, $fieldProps));
+        }
     }
 }
