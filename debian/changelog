@@ -1,3 +1,15 @@
+abraflexi-cli (0.2.0) unstable; urgency=low
+
+  * Add status command to verify server connection and company state.
+  * Add record create operation with mandatory-field validation and --force flag.
+  * Add manpage (man/abraflexi-cli.1) covering all commands and options.
+  * Add AppStream metainfo (debian/abraflexi-cli.metainfo.xml).
+  * Install application icon to /usr/share/icons/hicolor/scalable/apps/.
+  * Add PHPUnit command-configuration tests.
+  * Add autopkgtest coverage for status, list-companies, and list-evidences.
+
+ -- Vítězslav Dvořák <info@vitexsoftware.cz>  Wed, 29 Apr 2026 14:34:29 +0200
+
 abraflexi-cli (0.1.0) unstable; urgency=low
 
   * Initial release.

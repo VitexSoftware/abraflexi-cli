@@ -1,0 +1,223 @@
+.TH ABRAFLEXI\-CLI 1 "2026-04-29" "abraflexi-cli 0.2.0" "AbraFlexi CLI Manual"
+.SH NAME
+abraflexi\-cli \- command-line interface for the AbraFlexi accounting REST API
+.SH SYNOPSIS
+.B abraflexi\-cli
+[\fB\-\-envfile\fR=\fIFILE\fR]
+.I COMMAND
+[\fICOMMAND\-OPTIONS\fR]
+.SH DESCRIPTION
+.B abraflexi\-cli
+is a Symfony Console-based tool for interacting with the AbraFlexi (FlexiBee)
+accounting REST API.
+It allows listing companies, browsing evidence catalogues, and reading or
+creating individual records.
+.PP
+Connection parameters are read from the environment (see
+.B ENVIRONMENT
+below).
+A \fI.env\fR file in the current directory, in the application directory, or
+supplied via \fB\-\-envfile\fR is loaded automatically.
+.SH GLOBAL OPTIONS
+.TP
+.BI \-\-envfile= FILE
+Load environment variables from \fIFILE\fR before connecting to the API.
+Takes precedence over an automatically discovered \fI.env\fR file.
+.TP
+.B \-\-help
+Display help for the given command and exit.
+.TP
+.B \-\-version
+Print version information and exit.
+.TP
+.B \-v|\-vv|\-vvv
+Increase output verbosity (verbose, very verbose, debug).
+.TP
+.B \-q, \-\-quiet
+Suppress all output except errors.
+.TP
+.B \-\-no\-interaction
+Do not ask any interactive questions.
+.TP
+.B \-\-ansi|\-\-no\-ansi
+Force or disable ANSI colour output.
+.SH COMMANDS
+.SS status
+.B abraflexi\-cli status
+.PP
+Display the currently configured connection parameters (URL, user, company)
+and verify that the server and the selected company are reachable.
+Exits with a non-zero status when any required parameter is missing or the
+server cannot be contacted.
+.SS list\-companies
+.B abraflexi\-cli list\-companies
+.PP
+List all companies available on the configured AbraFlexi server.
+The output table contains the database name, the human-readable company name,
+and the company's current state.
+.SS list\-evidences
+.B abraflexi\-cli list\-evidences
+.PP
+List all evidence catalogues available in the selected company.
+The output table contains the evidence path, its name, and a short description.
+.SS record
+.B abraflexi\-cli record
+.I EVIDENCE
+[\fIOPERATION\fR]
+[\fIID\fR]
+[\fIOPTIONS\fR]
+.PP
+Interact with records of the named evidence.
+.I EVIDENCE
+is the API path identifier of the evidence (e.g.\&
+.IR faktura\-vydana ,
+.IR banka ,
+.IR adresar ).
+.PP
+.I OPERATION
+is one of:
+.RS
+.TP
+.B list
+(default) Display a paginated table of records.
+.TP
+.B show
+Display all fields of the record with the given \fIID\fR.
+.TP
+.B create
+Create a new record.
+Data can be provided as JSON via \fB\-\-data\fR or as individual
+\fB\-\-\fIfield\fB=\fIvalue\fR options.
+Mandatory fields are checked before submission unless \fB\-\-force\fR is set.
+.RE
+.PP
+Options for
+.BR record :
+.RS
+.TP
+.BR \-c ", " \-\-columns =\fICOLS\fR
+Comma-separated list of column names to display (default:
+.BR id,kod,nazev ).
+.TP
+.BR \-l ", " \-\-limit =\fIN\fR
+Maximum number of records to return (default: 20).
+.TP
+.BR \-s ", " \-\-start =\fIOFFSET\fR
+Pagination start offset.
+.TP
+.BR \-o ", " \-\-order =\fIEXPR\fR
+Sort expression accepted by the AbraFlexi API (e.g.\& \fInazev@A\fR).
+.TP
+.BR \-f ", " \-\-filter =\fIQUERY\fR
+Filter expression accepted by the AbraFlexi API
+(e.g.\& \fInazev BEGINS 'A'\fR).
+.TP
+.BR \-d ", " \-\-detail =\fILEVEL\fR
+Level of detail: \fIsummary\fR, \fIfull\fR, \fIid\fR, etc.
+.TP
+.BR \-r ", " \-\-relations =\fIVALUE\fR
+Include related sub-evidence relations.
+.TP
+.BR \-i ", " \-\-includes =\fIVALUE\fR
+Include related objects in the response.
+.TP
+.B \-\-dry\-run
+Simulate the operation without making changes on the server.
+.TP
+.B \-\-add\-row\-count
+Request the total row count from the server and include it in the output.
+.TP
+.BI \-\-data= JSON
+JSON-encoded data object for the \fBcreate\fR operation.
+.TP
+.B \-\-force
+Skip mandatory-field validation and create the record anyway.
+.RE
+.SH ENVIRONMENT
+.TP
+.B ABRAFLEXI_URL
+Full URL of the AbraFlexi REST API, including port
+(e.g.\& \fIhttps://server:5434\fR).
+.TP
+.B ABRAFLEXI_LOGIN
+.TQ
+.B ABRAFLEXI_USER
+Login username for the API.
+\fBABRAFLEXI_LOGIN\fR takes precedence over \fBABRAFLEXI_USER\fR.
+.TP
+.B ABRAFLEXI_PASSWORD
+Password for the API user.
+.TP
+.B ABRAFLEXI_COMPANY
+Database name of the company to connect to.
+.SH FILES
+.TP
+.I .env
+If present in the current working directory or in the application installation
+directory, environment variables are loaded from this file on startup.
+.TP
+.I /etc/abraflexi\-cli/.env
+System-wide default environment file (if deployed by the system administrator).
+.SH EXIT STATUS
+.TP
+.B 0
+Success.
+.TP
+.B 1
+General failure (missing parameters, API error, record not found, etc.).
+.SH EXAMPLES
+Check the connection to the configured server:
+.RS
+.EX
+abraflexi\-cli status
+.EE
+.RE
+.PP
+List all companies on the server:
+.RS
+.EX
+abraflexi\-cli list\-companies
+.EE
+.RE
+.PP
+List the first 50 issued invoices showing only selected columns:
+.RS
+.EX
+abraflexi\-cli record faktura\-vydana list \-\-limit=50 \-\-columns=id,kod,popis,datVyst
+.EE
+.RE
+.PP
+Show all fields of invoice with code \fIFV-001\fR:
+.RS
+.EX
+abraflexi\-cli record faktura\-vydana show FV-001
+.EE
+.RE
+.PP
+Create a new address book entry using JSON data:
+.RS
+.EX
+abraflexi\-cli record adresar create \-\-data='{"nazev":"ACME s.r.o.","ic":"12345678"}'
+.EE
+.RE
+.PP
+Use a custom environment file:
+.RS
+.EX
+abraflexi\-cli \-\-envfile=/etc/mycompany.env list\-evidences
+.EE
+.RE
+.SH SEE ALSO
+.BR php (1),
+.BR composer (1)
+.PP
+AbraFlexi REST API documentation:
+.I https://www.abraflexi.eu/api/documentation
+.PP
+Project homepage:
+.I https://github.com/VitexSoftware/abraflexi\-cli
+.SH AUTHOR
+Vítězslav Dvořák <info@vitexsoftware.cz>
+.SH COPYRIGHT
+Copyright \(co 2026 Vítězslav Dvořák.
+Licensed under the MIT License.

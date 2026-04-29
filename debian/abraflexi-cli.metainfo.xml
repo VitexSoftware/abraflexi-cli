@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="console-application">
+  <id>cz.vitexsoftware.abraflexi-cli</id>
+  <metadata_license>MIT</metadata_license>
+  <project_license>MIT</project_license>
+
+  <name>AbraFlexi CLI</name>
+  <summary>Command-line interface for the AbraFlexi accounting REST API</summary>
+
+  <description>
+    <p>
+      AbraFlexi CLI is a Symfony Console-based tool for interacting with the
+      AbraFlexi (FlexiBee) accounting REST API from the terminal.
+    </p>
+    <p>It provides the following commands:</p>
+    <ul>
+      <li>status – verify the configured server connection and company.</li>
+      <li>list-companies – list all companies available on the server.</li>
+      <li>list-evidences – browse the evidence catalogue of a company.</li>
+      <li>record – list, display, or create individual evidence records.</li>
+    </ul>
+    <p>
+      Connection parameters (URL, user, password, company) are supplied via
+      environment variables or a .env file, making the tool easy to integrate
+      into scripts and CI pipelines.
+    </p>
+  </description>
+
+  <icon type="stock">abraflexi-cli</icon>
+
+  <url type="homepage">https://github.com/VitexSoftware/abraflexi-cli</url>
+  <url type="bugtracker">https://github.com/VitexSoftware/abraflexi-cli/issues</url>
+
+  <developer id="cz.vitexsoftware">
+    <name>Vítězslav Dvořák / VitexSoftware</name>
+  </developer>
+
+  <releases>
+    <release version="0.2.0" date="2026-04-29">
+      <description>
+        <p>New features and packaging improvements:</p>
+        <ul>
+          <li>status command to verify server connection and company state.</li>
+          <li>record create operation with mandatory-field validation.</li>
+          <li>Manpage covering all commands, options, and environment variables.</li>
+          <li>AppStream metainfo and scalable application icon.</li>
+        </ul>
+      </description>
+    </release>
+    <release version="0.1.0" date="2026-02-10">
+      <description>
+        <p>Initial release.</p>
+      </description>
+    </release>
+  </releases>
+
+  <categories>
+    <category>Utility</category>
+    <category>Finance</category>
+  </categories>
+
+  <keywords>
+    <keyword>abraflexi</keyword>
+    <keyword>flexibee</keyword>
+    <keyword>accounting</keyword>
+    <keyword>ERP</keyword>
+    <keyword>CLI</keyword>
+    <keyword>REST</keyword>
+    <keyword>API</keyword>
+  </keywords>
+
+  <provides>
+    <binary>abraflexi-cli</binary>
+  </provides>
+
+  <content_rating type="oars-1.1"/>
+</component>

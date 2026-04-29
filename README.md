@@ -10,6 +10,8 @@ A powerful, Symfony-based Command Line Interface for [AbraFlexi](https://www.abr
 - 📂 **Evidence Discovery**: Browse all available API endpoints (evidences) on your server.
 - 🔍 **Record Inspection**: List records from any evidence with custom columns and limits.
 - 📄 **Detail View**: Show full details for specific records.
+- ✏️ **Record Creation**: Create records with mandatory-field validation and dry-run support.
+- 📡 **Connection Status**: Verify server reachability and company configuration at a glance.
 - 🔐 **Secure Configuration**: Uses `.env` files for managing server credentials.
 
 ## Installation
@@ -69,11 +71,25 @@ bin/abraflexi-cli --envfile=/path/to/your.env list-companies
 ## Usage
 
 The main executable is located at `bin/abraflexi-cli`.
+After installing the Debian package the binary is available system-wide as `abraflexi-cli`.
+A full manpage is installed alongside the package — read it with:
+
+```bash
+man abraflexi-cli
+```
 
 ### General Help
 
 ```bash
 bin/abraflexi-cli list
+```
+
+### 0. Check Connection Status
+
+Verify the configured server and company are reachable:
+
+```bash
+bin/abraflexi-cli status
 ```
 
 ### 1. List Available Companies
@@ -136,6 +152,28 @@ Show all fields for a specific record by its ID or Code:
 ```bash
 bin/abraflexi-cli record adresar show "code:AAA"
 ```
+
+### 5. Create a Record
+
+Create a new record using JSON data:
+
+```bash
+bin/abraflexi-cli record adresar create --data='{"nazev":"ACME s.r.o.","ic":"12345678"}'
+```
+
+Or supply fields as individual options:
+
+```bash
+bin/abraflexi-cli record adresar create --nazev="ACME s.r.o." --ic=12345678
+```
+
+Use `--dry-run` to validate without writing to the server:
+
+```bash
+bin/abraflexi-cli record faktura-vydana create --dry-run --data='{"kod":"TESTINV","datVyst":"2026-01-01"}'
+```
+
+Mandatory fields are checked automatically; use `--force` to bypass that check.
 
 ## Requirements
 

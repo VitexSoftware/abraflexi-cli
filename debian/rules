@@ -1,13 +1,17 @@
 #!/usr/bin/make -f
-# You must remove unused comment lines for the released package.
-#export DH_VERBOSE = 1
-#export DEB_BUILD_MAINT_OPTIONS = hardening=+all
-#export DEB_CFLAGS_MAINT_APPEND  = -Wall -pedantic
-#export DEB_LDFLAGS_MAINT_APPEND = -Wl,-O1
+
+PKG_VERSION := $(shell dpkg-parsechangelog -S Version | sed 's/~.*//')
+PKG_SOURCE  := $(shell jq -r '.name' composer.json)
 
 %:
 	dh $@
 
 override_dh_install:
 	dh_install
-	sed -i -e 's/\.\.\/vendor/\/var\/lib\/composer\/abraflexi-cli/g' debian/abraflexi-cli/usr/lib/abraflexi-cli/bin/abraflexi-cli
+	install -m 644 debian/autoload.php debian/abraflexi-cli/usr/lib/abraflexi-cli/autoload.php
+	sed -i "1a defined('APP_NAME') || define('APP_NAME', '$(PKG_SOURCE)');" \
+		debian/abraflexi-cli/usr/lib/abraflexi-cli/autoload.php
+	sed -i "s|'unknown'|'$(PKG_SOURCE)'|" debian/abraflexi-cli/usr/lib/abraflexi-cli/autoload.php
+	sed -i "s|'0.0.0'|'$(PKG_VERSION)'|" debian/abraflexi-cli/usr/lib/abraflexi-cli/autoload.php
+	sed -i "s|require_once __DIR__ . '/../vendor/autoload.php'|require_once '/usr/lib/abraflexi-cli/autoload.php'|" debian/abraflexi-cli/usr/lib/abraflexi-cli/bin/abraflexi-cli
+#	sed -i "2a defined('APP_VERSION') || define('APP_VERSION', '$(PKG_VERSION)');" debian/abraflexi-cli/usr/lib/abraflexi-cli/autoload.php

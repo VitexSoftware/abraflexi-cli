@@ -1,10 +1,6 @@
 #!/bin/sh
 set -e
 
-if [ "$1" = "configure" ]; then
-    composer-debian abraflexi-cli
-fi
-
 #DEBHELPER#
 
 exit 0

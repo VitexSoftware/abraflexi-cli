@@ -37,7 +37,7 @@ if (file_exists('.env')) {
 
 $_SERVER['argv'] = array_values($_SERVER['argv']);
 
-$application = new Application('AbraFlexi CLI', '0.1.0');
+$application = new Application('AbraFlexi CLI', '0.2.0');
 
 $application->add(new ListCompaniesCommand());
 $application->add(new ListEvidencesCommand());

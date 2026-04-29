@@ -1,3 +1,4 @@
 src usr/lib/abraflexi-cli/
 bin/abraflexi-cli usr/lib/abraflexi-cli/bin/
-debian/conf/composer.json usr/lib/abraflexi-cli/
+composer.json usr/lib/abraflexi-cli/
+abraflexi-cli.svg usr/share/icons/hicolor/scalable/apps/

@@ -4,6 +4,7 @@ Priority: optional
 Maintainer: Vítězslav Dvořák <info@vitexsoftware.cz>
 Build-Depends:
  debhelper-compat (= 13),
+ jq,
 Standards-Version: 4.7.0
 Homepage: https://github.com/VitexSoftware/abraflexi-cli
 Rules-Requires-Root: no
@@ -19,8 +20,7 @@ Depends:
  php-symfony-dotenv,
  php-symfony-dependency-injection,
  php-symfony-yaml,
- php-vitexsoftware-ease-core,
- composer-debian
+ composer
 Description: AbraFlexi commandline interface
  Symfony-based CLI for interacting with AbraFlexi API.
  Provides commands for listing companies, evidences, and records.
