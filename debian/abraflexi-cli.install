@@ -2,3 +2,4 @@ src usr/lib/abraflexi-cli/
 bin/abraflexi-cli usr/lib/abraflexi-cli/bin/
 composer.json usr/lib/abraflexi-cli/
 abraflexi-cli.svg usr/share/icons/hicolor/scalable/apps/
+debian/abraflexi-cli.metainfo.xml usr/share/metainfo/
