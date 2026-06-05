@@ -9,7 +9,7 @@ PKG_SOURCE  := $(shell jq -r '.name' composer.json)
 override_dh_install:
 	dh_install
 	install -m 644 debian/autoload.php debian/abraflexi-cli/usr/lib/abraflexi-cli/autoload.php
-	sed -i "1a defined('APP_NAME') || define('APP_NAME', '$(PKG_SOURCE)');" \
+	sed -i "/declare(strict_types=1);/a defined('APP_NAME') || define('APP_NAME', '$(PKG_SOURCE)');" \
 		debian/abraflexi-cli/usr/lib/abraflexi-cli/autoload.php
 	sed -i "s|'unknown'|'$(PKG_SOURCE)'|" debian/abraflexi-cli/usr/lib/abraflexi-cli/autoload.php
 	sed -i "s|'0.0.0'|'$(PKG_VERSION)'|" debian/abraflexi-cli/usr/lib/abraflexi-cli/autoload.php
