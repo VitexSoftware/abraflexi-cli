@@ -35,8 +35,8 @@ class RecordCommand extends BaseCommand
             ->setName('record')
             ->setDescription('Interact with specific evidence records')
             ->addArgument('evidence', InputArgument::REQUIRED, 'Evidence name (e.g., faktura-vydana, banka)')
-            ->addArgument('operation', InputArgument::OPTIONAL, 'Operation: list, show, create, update, delete, properties, search', 'list')
-            ->addArgument('id', InputArgument::OPTIONAL, 'Record ID (for show, update, delete)')
+            ->addArgument('operation', InputArgument::OPTIONAL, 'Operation: list, show, create, update, delete, properties, search, attachments, download', 'list')
+            ->addArgument('id', InputArgument::OPTIONAL, 'Record ID (for show, update, delete, attachments); attachment ID for download (evidence "priloha")')
             ->addOption('columns', 'c', InputOption::VALUE_OPTIONAL, 'Comma separated list of columns', 'id,kod,nazev')
             ->addOption('limit', 'l', InputOption::VALUE_OPTIONAL, 'Limit results', 20)
             ->addOption('start', 's', InputOption::VALUE_OPTIONAL, 'Start page/offset for pagination')
@@ -49,7 +49,8 @@ class RecordCommand extends BaseCommand
             ->addOption('add-row-count', null, InputOption::VALUE_NONE, 'Add total row count to output')
             ->addOption('data', null, InputOption::VALUE_OPTIONAL, 'JSON data for create/update')
             ->addOption('force', null, InputOption::VALUE_NONE, 'Force create even if mandatory fields are missing')
-            ->addOption('query', null, InputOption::VALUE_OPTIONAL, 'Search text for the search operation');
+            ->addOption('query', null, InputOption::VALUE_OPTIONAL, 'Search text for the search operation')
+            ->addOption('output', 'O', InputOption::VALUE_OPTIONAL, 'Destination file or directory for the download operation');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
@@ -130,6 +131,38 @@ class RecordCommand extends BaseCommand
 
         if ($operation === 'search') {
             return $this->handleSearch($evidence, $input, $output, $json);
+        }
+
+        if ($operation === 'attachments') {
+            $id = $input->getArgument('id');
+
+            if (!$id) {
+                if ($json) {
+                    self::writeJsonError($output, 'ID is required for attachments operation');
+                } else {
+                    $output->writeln('<error>ID is required for attachments operation</error>');
+                }
+
+                return Command::FAILURE;
+            }
+
+            return $this->handleAttachments($evidence, (string) $id, $output, $json);
+        }
+
+        if ($operation === 'download') {
+            $id = $input->getArgument('id');
+
+            if (!$id) {
+                if ($json) {
+                    self::writeJsonError($output, 'ID (attachment ID) is required for download operation');
+                } else {
+                    $output->writeln('<error>ID (attachment ID) is required for download operation</error>');
+                }
+
+                return Command::FAILURE;
+            }
+
+            return $this->handleDownload((string) $id, $input, $output, $json);
         }
 
         if ($json) {
@@ -605,6 +638,13 @@ class RecordCommand extends BaseCommand
                     'mandatory' => ($info['mandatory'] ?? '') === 'true',
                     'writable' => ($info['isWritable'] ?? '') === 'true',
                     'title' => (string) ($info['title'] ?? ($info['name'] ?? '')),
+                    'visible' => ($info['isVisible'] ?? 'true') === 'true',
+                    'inSummary' => ($info['inSummary'] ?? '') === 'true',
+                    'inDetail' => ($info['inDetail'] ?? '') === 'true',
+                    'sortable' => ($info['isSortable'] ?? '') === 'true',
+                    'maxLength' => isset($info['maxLength']) ? (int) $info['maxLength'] : null,
+                    'relationEvidence' => (string) ($info['fkEvidencePath'] ?? ''),
+                    'relationType' => (string) ($info['fkEvidenceType'] ?? ''),
                 ];
             }
 
@@ -648,6 +688,123 @@ class RecordCommand extends BaseCommand
                 foreach ($columns as $column) {
                     $output->writeln($column['name'].' '.$column['type']);
                 }
+            }
+
+            return Command::SUCCESS;
+        } catch (\Exception $e) {
+            if ($json) {
+                self::writeJsonError($output, 'Error: '.$e->getMessage());
+            } else {
+                $output->writeln('<error>Error: '.$e->getMessage().'</error>');
+            }
+
+            return Command::FAILURE;
+        }
+    }
+
+    /**
+     * List a record's attachments (přílohy): PDFs on documents, photos on
+     * price-list items, etc. Metadata only (id, filename, content type,
+     * size) - use the "download" operation to fetch a specific attachment's
+     * bytes.
+     */
+    private function handleAttachments(string $evidence, string $id, OutputInterface $output, bool $json): int
+    {
+        $options = $this->getAbraFlexiOptions();
+        $options['evidence'] = $evidence;
+
+        try {
+            $object = new RO($id, $options);
+            $attachments = array_values(\AbraFlexi\Priloha::getAttachmentsList($object));
+
+            if ($json) {
+                self::writeJson($output, ['evidence' => $evidence, 'id' => $id, 'attachments' => $attachments]);
+            } else {
+                foreach ($attachments as $attachment) {
+                    $output->writeln(
+                        ($attachment['id'] ?? '?').' '.
+                        ($attachment['nazSoub'] ?? $attachment['name'] ?? '').' '.
+                        ($attachment['contentType'] ?? ''),
+                    );
+                }
+            }
+
+            return Command::SUCCESS;
+        } catch (\Exception $e) {
+            if ($json) {
+                self::writeJsonError($output, 'Error: '.$e->getMessage());
+            } else {
+                $output->writeln('<error>Error: '.$e->getMessage().'</error>');
+            }
+
+            return Command::FAILURE;
+        }
+    }
+
+    /**
+     * Download one attachment's raw bytes to a local file (evidence must be
+     * "priloha", $id its attachment ID - as listed by "attachments"). Writes
+     * the file directly rather than embedding it in the JSON response, since
+     * every other command channel here is JSON-only and attachments (scanned
+     * PDFs, photos) can be several MB.
+     */
+    private function handleDownload(string $id, InputInterface $input, OutputInterface $output, bool $json): int
+    {
+        $destination = $input->getOption('output');
+
+        if (!$destination) {
+            if ($json) {
+                self::writeJsonError($output, '--output=<path> is required for download operation');
+            } else {
+                $output->writeln('<error>--output=<path> is required for download operation</error>');
+            }
+
+            return Command::FAILURE;
+        }
+
+        $options = $this->getAbraFlexiOptions();
+        $options['evidence'] = 'priloha';
+
+        try {
+            $meta = new RO($id, $options);
+
+            if (!$meta->getDataValue('id')) {
+                if ($json) {
+                    self::writeJsonError($output, "Attachment {$id} not found.");
+                } else {
+                    $output->writeln("<error>Attachment {$id} not found.</error>");
+                }
+
+                return Command::FAILURE;
+            }
+
+            $written = \AbraFlexi\Priloha::saveToFile((int) $id, $destination);
+
+            if ($written <= 0) {
+                if ($json) {
+                    self::writeJsonError($output, "Could not download attachment {$id}.");
+                } else {
+                    $output->writeln("<error>Could not download attachment {$id}.</error>");
+                }
+
+                return Command::FAILURE;
+            }
+
+            $savedPath = is_dir($destination) ? rtrim($destination, '/').'/'.$meta->getDataValue('nazSoub') : $destination;
+
+            $payload = [
+                'ok' => true,
+                'id' => $id,
+                'path' => $savedPath,
+                'bytes' => $written,
+                'contentType' => $meta->getDataValue('contentType'),
+                'filename' => $meta->getDataValue('nazSoub'),
+            ];
+
+            if ($json) {
+                self::writeJson($output, $payload);
+            } else {
+                $output->writeln("<info>Saved {$written} bytes to {$savedPath}</info>");
             }
 
             return Command::SUCCESS;

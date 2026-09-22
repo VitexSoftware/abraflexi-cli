@@ -1,3 +1,12 @@
+abraflexi-cli (0.2.2) unstable; urgency=medium
+
+  * Fix evidencePath/dbName priority in list-evidences so record
+    navigation from the TUI uses the correct REST slug (dDoklFak et al.
+    no longer break faktura-vydana etc.). Fix list-companies to use
+    dbNazev fallback consistently in JSON.
+
+ -- Vítězslav Dvořák <info@vitexsoftware.cz>  Tue, 22 Sep 2026 08:28:16 +0200
+
 abraflexi-cli (0.2.1) unstable; urgency=low
 
   * Add --format=json output used by abraflexi-tui.

@@ -15,3 +15,4 @@ debian/files
 debian/abraflexi-cli.debhelper.log
 
 .build/
+.phpunit.result.cache

@@ -45,7 +45,11 @@ class ListEvidencesCommand extends BaseCommand
         $rows = [];
 
         foreach ($evidences ?: [] as $name => $evidence) {
-            $path = $evidence['dbName'] ?? $evidence['evidencePath'] ?? $name;
+            // evidencePath is the REST slug accepted by `record <evidence> ...`
+            // (e.g. "adresar"); dbName is the internal DB object name (e.g.
+            // "aAdresar") and is not a valid evidence argument, so it's only
+            // used as a last-resort fallback.
+            $path = $evidence['evidencePath'] ?? $evidence['dbName'] ?? $name;
             $nameStr = $evidence['evidenceName'] ?? (\AbraFlexi\EvidenceList::$name[$path] ?? (\AbraFlexi\EvidenceList::$evidences[$path]['evidenceName'] ?? ''));
             $rows[] = [
                 'path' => $path,
