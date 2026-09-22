@@ -25,6 +25,8 @@ class ListCompaniesCommand extends BaseCommand
 
     protected function configure(): void
     {
+        parent::configure();
+
         $this->setName('list-companies')
             ->setDescription('List all available companies in AbraFlexi');
     }
@@ -33,6 +35,22 @@ class ListCompaniesCommand extends BaseCommand
     {
         $companyClient = new Company(null, $this->getAbraFlexiOptions());
         $companies = $companyClient->getColumnsFromAbraFlexi(['dbName', 'nazev', 'stavEnum']);
+
+        if (self::isJsonFormat($input)) {
+            $rows = [];
+
+            foreach ($companies ?: [] as $company) {
+                $rows[] = [
+                    'dbName' => $company['dbName'] ?? null,
+                    'nazev' => $company['nazev'] ?? null,
+                    'stavEnum' => $company['stavEnum'] ?? 'N/A',
+                ];
+            }
+
+            self::writeJson($output, $rows);
+
+            return Command::SUCCESS;
+        }
 
         if (empty($companies)) {
             $output->writeln('<info>No companies found.</info>');

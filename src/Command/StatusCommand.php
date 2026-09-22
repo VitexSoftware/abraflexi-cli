@@ -24,42 +24,85 @@ class StatusCommand extends BaseCommand
 
     protected function configure(): void
     {
+        parent::configure();
+
         $this->setName('status')
             ->setDescription('Show information about configured company and server state');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        $json = self::isJsonFormat($input);
         $options = $this->getAbraFlexiOptions();
-        $output->writeln('<info>Configured AbraFlexi Connection:</info>');
-        $output->writeln('URL: '.($options['url'] ?? 'Not set'));
-        $output->writeln('User: '.($options['user'] ?? 'Not set'));
-        $output->writeln('Company: '.($options['company'] ?? 'Not set'));
 
-        if (empty($options['url']) || empty($options['user']) || empty($options['password']) || empty($options['company'])) {
-            $output->writeln('<error>Some AbraFlexi connection parameters are missing.</error>');
+        $tokenAuth = self::hasTokenAuth($options);
+
+        if (!$json) {
+            $output->writeln('<info>Configured AbraFlexi Connection:</info>');
+            $output->writeln('URL: '.($options['url'] ?? 'Not set'));
+            $output->writeln('User: '.($tokenAuth ? '(session token)' : ($options['user'] ?? 'Not set')));
+            $output->writeln('Company: '.($options['company'] ?? 'Not set'));
+        }
+
+        if (empty($options['url']) || empty($options['company']) || !self::hasCredentials($options)) {
+            if ($json) {
+                self::writeJsonError($output, 'Some AbraFlexi connection parameters are missing.', [
+                    'url' => $options['url'] ?? null,
+                    'user' => $tokenAuth ? null : ($options['user'] ?? null),
+                    'authMethod' => $tokenAuth ? 'token' : 'password',
+                    'company' => $options['company'] ?? null,
+                ]);
+            } else {
+                $output->writeln('<error>Some AbraFlexi connection parameters are missing.</error>');
+            }
 
             return Command::FAILURE;
         }
 
-        $output->writeln('');
-        $output->writeln('<info>Checking server and company state...</info>');
+        if (!$json) {
+            $output->writeln('');
+            $output->writeln('<info>Checking server and company state...</info>');
+        }
 
         try {
             $companyClient = new Company($options['company'], $options);
             $companyInfo = $companyClient->getData();
 
             if (isset($companyInfo['nazev'])) {
+                if ($json) {
+                    self::writeJson($output, [
+                        'status' => 'ok',
+                        'url' => $options['url'],
+                        'authMethod' => $tokenAuth ? 'token' : 'password',
+                        'user' => $tokenAuth ? null : ($options['user'] ?? null),
+                        'company' => $options['company'],
+                        'reachable' => true,
+                        'companyName' => $companyInfo['nazev'],
+                        'companyDb' => $companyInfo['dbNazev'],
+                        'companyState' => $companyInfo['stavEnum'] ?? null,
+                    ]);
+
+                    return Command::SUCCESS;
+                }
+
                 $output->writeln('Company Name: '.$companyInfo['nazev']);
                 $output->writeln('Company DB: '.$companyInfo['dbNazev']);
                 $output->writeln('Company State: '.($companyInfo['stavEnum'] ?? 'N/A'));
             } else {
-                $output->writeln('<error>Unable to retrieve company information.</error>');
+                if ($json) {
+                    self::writeJsonError($output, 'Unable to retrieve company information.');
+                } else {
+                    $output->writeln('<error>Unable to retrieve company information.</error>');
+                }
 
                 return Command::FAILURE;
             }
         } catch (\Exception $e) {
-            $output->writeln('<error>Server or company not reachable: '.$e->getMessage().'</error>');
+            if ($json) {
+                self::writeJsonError($output, 'Server or company not reachable: '.$e->getMessage());
+            } else {
+                $output->writeln('<error>Server or company not reachable: '.$e->getMessage().'</error>');
+            }
 
             return Command::FAILURE;
         }

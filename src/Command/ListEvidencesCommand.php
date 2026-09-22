@@ -25,6 +25,8 @@ class ListEvidencesCommand extends BaseCommand
 
     protected function configure(): void
     {
+        parent::configure();
+
         $this->setName('list-evidences')
             ->setDescription('List all available evidences in AbraFlexi');
     }
@@ -34,8 +36,26 @@ class ListEvidencesCommand extends BaseCommand
         $evidenceClient = new EvidenceList(null, $this->getAbraFlexiOptions());
         $evidences = $evidenceClient->getColumnsFromAbraFlexi(['evidenceName', 'evidencePath', 'dbName'], ['limit' => 0]);
 
-        if (empty($evidences)) {
+        if (empty($evidences) && !self::isJsonFormat($input)) {
             $output->writeln('<info>No evidences found.</info>');
+
+            return Command::SUCCESS;
+        }
+
+        $rows = [];
+
+        foreach ($evidences ?: [] as $name => $evidence) {
+            $path = $evidence['dbName'] ?? $evidence['evidencePath'] ?? $name;
+            $nameStr = $evidence['evidenceName'] ?? (\AbraFlexi\EvidenceList::$name[$path] ?? (\AbraFlexi\EvidenceList::$evidences[$path]['evidenceName'] ?? ''));
+            $rows[] = [
+                'path' => $path,
+                'name' => $nameStr,
+                'description' => $evidence['popis'] ?? '',
+            ];
+        }
+
+        if (self::isJsonFormat($input)) {
+            self::writeJson($output, $rows);
 
             return Command::SUCCESS;
         }
@@ -43,14 +63,8 @@ class ListEvidencesCommand extends BaseCommand
         $table = new Table($output);
         $table->setHeaders(['Path', 'Name', 'Description']);
 
-        foreach ($evidences as $name => $evidence) {
-            $path = $evidence['dbName'] ?? $evidence['evidencePath'] ?? $name;
-            $nameStr = $evidence['evidenceName'] ?? (\AbraFlexi\EvidenceList::$name[$path] ?? (\AbraFlexi\EvidenceList::$evidences[$path]['evidenceName'] ?? ''));
-            $table->addRow([
-                $path,
-                $nameStr,
-                $evidence['popis'] ?? '',
-            ]);
+        foreach ($rows as $row) {
+            $table->addRow([$row['path'], $row['name'], $row['description']]);
         }
 
         $table->render();

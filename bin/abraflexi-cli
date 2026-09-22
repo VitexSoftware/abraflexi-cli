@@ -8,8 +8,12 @@ require_once __DIR__ . '/../vendor/autoload.php';
 
 use Symfony\Component\Console\Application;
 use Symfony\Component\Dotenv\Dotenv;
+use VitexSoftware\AbraflexiCli\Command\ChangesCommand;
+use VitexSoftware\AbraflexiCli\Command\KeepAliveCommand;
 use VitexSoftware\AbraflexiCli\Command\ListCompaniesCommand;
 use VitexSoftware\AbraflexiCli\Command\ListEvidencesCommand;
+use VitexSoftware\AbraflexiCli\Command\LoginCommand;
+use VitexSoftware\AbraflexiCli\Command\QueryCommand;
 use VitexSoftware\AbraflexiCli\Command\RecordCommand;
 
 $envFile = null;
@@ -37,11 +41,15 @@ if (file_exists('.env')) {
 
 $_SERVER['argv'] = array_values($_SERVER['argv']);
 
-$application = new Application('AbraFlexi CLI', '0.2.0');
+$application = new Application('AbraFlexi CLI', '0.2.1');
 
 $application->add(new ListCompaniesCommand());
 $application->add(new ListEvidencesCommand());
 $application->add(new RecordCommand());
+$application->add(new QueryCommand());
+$application->add(new ChangesCommand());
+$application->add(new LoginCommand());
+$application->add(new KeepAliveCommand());
 
 $application->add(new \VitexSoftware\AbraflexiCli\Command\StatusCommand());
 

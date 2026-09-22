@@ -1,3 +1,11 @@
+abraflexi-cli (0.2.1) unstable; urgency=low
+
+  * Add --format=json output used by abraflexi-tui.
+  * Add query, changes, login and keep-alive commands.
+  * Extend record with update, delete, properties and search.
+
+ -- Vítězslav Dvořák <info@vitexsoftware.cz>  Tue, 22 Sep 2026 06:29:00 +0200
+
 abraflexi-cli (0.2.0) unstable; urgency=low
 
   * Add status command to verify server connection and company state.

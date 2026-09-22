@@ -16,6 +16,7 @@ namespace VitexSoftware\AbraflexiCli\Command;
 use AbraFlexi\RO;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 abstract class BaseCommand extends Command
@@ -37,8 +38,13 @@ abstract class BaseCommand extends Command
 
     protected function configure(): void
     {
-        $this->setName('base-command') // A base command typically doesn't have a specific name, but added as per instruction.
-            ->setDescription('Base command for AbraFlexi CLI tools');
+        $this->addOption(
+            'format',
+            null,
+            InputOption::VALUE_REQUIRED,
+            'Output format: text (default) or json',
+            'text'
+        );
     }
 
     protected function getAbraFlexiOptions(): array
@@ -65,6 +71,51 @@ abstract class BaseCommand extends Command
             $options['company'] = getenv('ABRAFLEXI_COMPANY');
         }
 
+        if (getenv('ABRAFLEXI_AUTHSESSID')) {
+            $options['authSessionId'] = getenv('ABRAFLEXI_AUTHSESSID');
+        }
+
         return $options;
+    }
+
+    /**
+     * Whether the configured connection uses a session token instead of login/password.
+     */
+    protected static function hasTokenAuth(array $options): bool
+    {
+        return !empty($options['authSessionId']);
+    }
+
+    /**
+     * Whether the configured connection has enough credentials to authenticate,
+     * either a session token (authSessionId) or a login/password pair.
+     */
+    protected static function hasCredentials(array $options): bool
+    {
+        return self::hasTokenAuth($options) || (!empty($options['user']) && !empty($options['password']));
+    }
+
+    /**
+     * Whether the command was invoked with --format=json.
+     */
+    protected static function isJsonFormat(InputInterface $input): bool
+    {
+        return strtolower((string) $input->getOption('format')) === 'json';
+    }
+
+    /**
+     * Write pretty-printed JSON to the output.
+     */
+    protected static function writeJson(OutputInterface $output, mixed $data): void
+    {
+        $output->writeln(json_encode($data, \JSON_PRETTY_PRINT | \JSON_UNESCAPED_SLASHES | \JSON_UNESCAPED_UNICODE));
+    }
+
+    /**
+     * Write a standard JSON error envelope: {"status":"error","message":"...", ...$extra}.
+     */
+    protected static function writeJsonError(OutputInterface $output, string $message, array $extra = []): void
+    {
+        self::writeJson($output, array_merge(['status' => 'error', 'message' => $message], $extra));
     }
 }

@@ -16,6 +16,7 @@ namespace VitexSoftware\AbraflexiCli\Tests\Command;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Application;
+use Symfony\Component\Console\Tester\CommandTester;
 use VitexSoftware\AbraflexiCli\Command\RecordCommand;
 
 class RecordCommandTest extends TestCase
@@ -87,7 +88,47 @@ class RecordCommandTest extends TestCase
             ['add-row-count'],
             ['data'],
             ['force'],
+            ['query'],
         ];
+    }
+
+    public function testUpdateRequiresId(): void
+    {
+        $tester = new CommandTester($this->app->find('record'));
+        $tester->execute([
+            'evidence' => 'adresar',
+            'operation' => 'update',
+            '--format' => 'json',
+        ]);
+
+        $this->assertSame(1, $tester->getStatusCode());
+        $this->assertStringContainsString('ID is required', $tester->getDisplay());
+    }
+
+    public function testDeleteRequiresId(): void
+    {
+        $tester = new CommandTester($this->app->find('record'));
+        $tester->execute([
+            'evidence' => 'adresar',
+            'operation' => 'delete',
+            '--format' => 'json',
+        ]);
+
+        $this->assertSame(1, $tester->getStatusCode());
+        $this->assertStringContainsString('ID is required', $tester->getDisplay());
+    }
+
+    public function testSearchRequiresQuery(): void
+    {
+        $tester = new CommandTester($this->app->find('record'));
+        $tester->execute([
+            'evidence' => 'adresar',
+            'operation' => 'search',
+            '--format' => 'json',
+        ]);
+
+        $this->assertSame(1, $tester->getStatusCode());
+        $this->assertStringContainsString('Search text is required', $tester->getDisplay());
     }
 
     public function testCommandIsRegisteredInApplication(): void
