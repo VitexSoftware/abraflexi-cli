@@ -36,6 +36,16 @@
   </developer>
 
   <releases>
+    <release version="0.2.1" date="2026-09-22">
+      <description>
+        <p>JSON output and the commands used by abraflexi-tui:</p>
+        <ul>
+          <li>--format=json on every command.</li>
+          <li>record update, delete, properties and search.</li>
+          <li>query, changes, login and keep-alive.</li>
+        </ul>
+      </description>
+    </release>
     <release version="0.2.0" date="2026-04-29">
       <description>
         <p>New features and packaging improvements:</p>
